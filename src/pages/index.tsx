@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Button } from '@mui/material';
 import styles from '../styles/Home.module.css';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -29,19 +28,6 @@ export default function Home({ pokemon }: Props) {
         <h1>Welcome to Pokémon Go!</h1>
       </div>
       <div style={{ textAlign: 'center' }}>
-        {/* <Link href={'/pokemon'}>
-          <Button>
-            <Image
-              src={hover ? '/lock.png' : '/pokeball.png'}
-              alt="Pokeball"
-              width={100}
-              height={100}
-              className={styles.pokeball}
-              onMouseEnter={() => setHover(true)}
-              onMouseLeave={() => setHover(false)}
-            />
-          </Button>
-        </Link> */}
         <Link href={'/pokemon'}>
           <Image
             src={hover ? '/lock.png' : '/pokeball.png'}

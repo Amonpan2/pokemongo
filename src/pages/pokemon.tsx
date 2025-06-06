@@ -4,11 +4,27 @@ import { Card, CardContent, CardMedia, Typography, Grid, Button, TextField } fro
 import { CiSearch } from "react-icons/ci";
 import Link from "next/link";
 import styles from "../styles/Pokemon.module.css";
-
+import { typeColor } from "../components/typeColor";
+import Image from "next/image";
+import axios from 'axios';
 type Pokemon = {
   id: number;
   name: string;
-  sprites: { front_default: string; back_default: string };
+  sprites: {
+    front_default: string
+    back_default: string
+    other?: {
+      dream_world?: {
+        front_default: string;
+      };
+      home?: {
+        front_default: string;
+        front_shiny: string;
+      };
+
+    };
+
+  };
   base_experience: number;
   height: number;
   weight: number;
@@ -19,96 +35,78 @@ type Pokemon = {
     };
   }[];
   abilities: { ability: { name: string; url: string } }[];
+
 };
 type PokemonListItem = { name: string; url: string };
-const typeColor = (type: string) => {
-  switch (type) {
-    case "fire":
-      return "#ff7043";
-    case "water":
-      return "#42a5f5";
-    case "grass":
-      return "#66bb6a";
-    case "electric":
-      return "#ffd600";
-    case "bug":
-      return "#a2cf6e";
-    case "poison":
-      return "#ba68c8";
-    case "ground":
-      return "#bcaaa4";
-    case "rock":
-      return "#bdb76b";
-    case "psychic":
-      return "#f06292";
-    case "fighting":
-      return "#d84315";
-    case "ghost":
-      return "#7e57c2";
-    case "ice":
-      return "#4fc3f7";
-    case "dragon":
-      return "#1976d2";
-    case "dark":
-      return "#616161";
-    case "fairy":
-      return "#f8bbd0";
-    case "steel":
-      return "#90a4ae";
-    case "flying":
-      return "#81d4fa";
-    default:
-      return "#1976d2";
-  }
-};
+
 export default function Pokemon() {
   const [data, setData] = useState<Pokemon[]>([]);
   const [offset, setOffset] = useState(0);
-  const [hoveredId, setHoveredId] = useState<number | null>(null);
   const [search, setSearch] = useState("");
   const [allPokemon, setAllPokemon] = useState<PokemonListItem[]>([]);
   const [searchResults, setSearchResults] = useState<Pokemon[]>([]);
   const [loading, setLoading] = useState(false);
 
-
+  //fetch all pokemon
+  const fetchData_all = async () => {
+    try {
+      axios.get('https://pokeapi.co/api/v2/pokemon?limit=1302')
+      // console.log(response.data)
+      .then(response => response.data)
+      .then(data =>setAllPokemon(data.results))
+    } catch (error) {
+      console.log('Error:', error)
+    }
+  };
   useEffect(() => {
-    fetch("https://pokeapi.co/api/v2/pokemon?limit=1302")
-      .then(res => res.json())
-      .then(data => setAllPokemon(data.results));
-  }, []);
+    fetchData_all();
+  },[])
+  // useEffect(() => {
+  //   fetch("https://pokeapi.co/api/v2/pokemon?limit=1302")
+  //     .then(res => res.json())
+  //     .then(data => setAllPokemon(data.results));
+  // }, []);
+  //fetch pokemon data with offset
 
   const fetchData = async () => {
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=18&offset=${offset}`);
-    const list = await res.json();
+    const res = await axios.get(`https://pokeapi.co/api/v2/pokemon?limit=18&offset=${offset}`);
+    const list = await res.data;
     const results = await Promise.all(
       list.results.map((item: any) =>
-        fetch(item.url).then(res => res.json())
+        axios.get(item.url).then(res => res.data)
       )
     );
     setData(prev => [...prev, ...results]);
   };
   useEffect(() => {
-    if (search) return; // ถ้ามี search ไม่ต้องโหลดเพิ่ม
+    if (search) return;
     fetchData();
   }, [offset, search]);
+
+  // search function
   useEffect(() => {
     if (!search) {
       setSearchResults([]);
       return;
     }
-    const filtered = allPokemon.filter(p =>
-      p.name.toLowerCase().includes(search.toLowerCase())
-    ).slice(0, 12);
+
+    const filtered = allPokemon
+    .filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
+    .slice(0, 20)
+
     if (filtered.length === 0) {
       setSearchResults([]);
       return;
     }
+
     setLoading(true);
+
+
     Promise.all(
-      filtered.map(p =>
-        fetch(p.url).then(res => res.json())
-      )
-    ).then(setSearchResults).finally(() => setLoading(false));
+      filtered.map(p => axios.get(p.url).then(res => res.data))
+    )
+      .then(setSearchResults)
+      .finally(() => setLoading(false));
   }, [search, allPokemon]);
 
   const displayData = search ? searchResults : data;
@@ -121,6 +119,11 @@ export default function Pokemon() {
         fullWidth
         value={search}
         onChange={e => setSearch(e.target.value)}
+        onKeyDown={e => {
+          if (e.key === " ") {
+            e.preventDefault();
+          }
+        }}
         sx={{ marginBottom: 2, width: 500, display: 'block', margin: '20px auto' }}
         InputProps={{
           endAdornment: <CiSearch />
@@ -135,19 +138,22 @@ export default function Pokemon() {
           <Grid size={{ xs: 4, md: 3 }}>
             <Link href={`/pokemon/${val.id}`} style={{ textDecoration: "none" }}>
               <Card>
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image={
-                    hoveredId === val.id
-                      ? val.sprites.back_default
-                      : val.sprites.front_default
-                  }
-                  alt={val.name}
-                  style={{ objectFit: "contain", background: "#DEFBE9" }}
-                  onMouseEnter={() => setHoveredId(val.id)}
-                  onMouseLeave={() => setHoveredId(null)}
-                />
+                <CardMedia sx={{
+                  padding: 2,
+                  background: '#defbe9'
+                }}>
+                  <Image
+                    src={val.sprites.other?.dream_world?.front_default || val.sprites.front_default}
+                    alt={val.name}
+                    width={150}
+                    height={150}
+                    style={{
+                      padding: 10,
+                      display: 'block',
+                      margin: '0 auto',
+                    }}
+                  />
+                </CardMedia>
                 <CardContent>
                   <Typography>
                     {val.name.charAt(0).toUpperCase() + val.name.slice(1)}
