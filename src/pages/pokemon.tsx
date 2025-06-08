@@ -129,7 +129,6 @@ export default function Pokemon() {
           endAdornment: <CiSearch />
         }}
       />
-
       <Grid container sx={{ padding: 2 }} spacing={2}>
         {loading && (
           <Typography sx={{ width: "100%", textAlign: "center" }}>Loading...</Typography>

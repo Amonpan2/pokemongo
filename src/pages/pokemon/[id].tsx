@@ -16,7 +16,6 @@ import {
 
 
 } from "@mui/material";
-import { DataGrid } from '@mui/x-data-grid';
 import styles from "../../styles/Pokemon.module.css";
 type Pokemon = {
     id: number;
@@ -86,26 +85,17 @@ export default function PokemonDetail({ pokemon }: { pokemon: Pokemon }) {
 
         <Grid container spacing={2} size={{ xs: 12, md: 8 }}
             style={{
-                // minHeight: "600px",
-                // width: "100%",
                 textAlign: "center",
                 display: "flex",
                 justifyContent: "left",
                 gap: 50,
-                
-                // backgroundImage: 'url("/bg-poke.png")',
-                // backgroundSize: "cover",
-                // backgroundRepeat: "no-repeat",
-                // backgroundPosition: "center",
             }}
         >
             <Card sx={{
                 maxWidth: 400,
                 height: 570,
                 marginLeft: 0,
-                // background: '#ffda27',
                 borderRadius: 4,
-                // border: '1px solid #ccc',
                 boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
                 border: "outset rgb(148, 182, 224)",
                 display: 'flex',
@@ -285,8 +275,8 @@ export default function PokemonDetail({ pokemon }: { pokemon: Pokemon }) {
                     <Typography style={{ textAlign: 'left', padding: 15, border: "1px solid #ccc", backgroundColor: 'none', borderRadius: 10 }}>
                         {pokemon.stats.map((stat, index) => {
                             const statName = stat.stat.name
-                                .replace('-', ' ')               // เปลี่ยน dash เป็น space
-                                .replace(/\b\w/g, (c) => c.toUpperCase()); // ทำให้อักษรตัวแรกของแต่ละคำเป็นตัวใหญ่
+                                .replace('-', ' ')               
+                                .replace(/\b\w/g, (c) => c.toUpperCase()); 
 
                             return (
                                 <span key={index}>
