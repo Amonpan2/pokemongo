@@ -135,7 +135,7 @@ export default function Pokemon() {
           <Typography sx={{ width: "100%", textAlign: "center" }}>Loading...</Typography>
         )}
         {displayData.map(val => (
-          <Grid size={{ xs: 4, md: 3 }}>
+          <Grid size={{ xs: 12, md: 3 }}>
             <Link href={`/pokemon/${val.id}`} style={{ textDecoration: "none" }}>
               <Card>
                 <CardMedia sx={{

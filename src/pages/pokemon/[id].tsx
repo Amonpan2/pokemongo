@@ -11,8 +11,12 @@ import {
     CardContent,
     CardMedia,
     Typography,
-    Button
+    Button,
+    Grid,
+
+
 } from "@mui/material";
+import { DataGrid } from '@mui/x-data-grid';
 import styles from "../../styles/Pokemon.module.css";
 type Pokemon = {
     id: number;
@@ -70,13 +74,17 @@ type Pokemon = {
             url: string;
         };
     }[];
+    flavoe_text_entries: {
+
+    }
 };
 
 export default function PokemonDetail({ pokemon }: { pokemon: Pokemon }) {
-    
+
     if (!pokemon) return <div>Not Found</div>;
     return (
-        <div
+
+        <Grid container spacing={2} size={{ xs: 12, md: 8 }}
             style={{
                 // minHeight: "600px",
                 // width: "100%",
@@ -84,6 +92,7 @@ export default function PokemonDetail({ pokemon }: { pokemon: Pokemon }) {
                 display: "flex",
                 justifyContent: "left",
                 gap: 50,
+                
                 // backgroundImage: 'url("/bg-poke.png")',
                 // backgroundSize: "cover",
                 // backgroundRepeat: "no-repeat",
@@ -92,7 +101,7 @@ export default function PokemonDetail({ pokemon }: { pokemon: Pokemon }) {
         >
             <Card sx={{
                 maxWidth: 400,
-                height: 550,
+                height: 570,
                 marginLeft: 0,
                 // background: '#ffda27',
                 borderRadius: 4,
@@ -130,13 +139,15 @@ export default function PokemonDetail({ pokemon }: { pokemon: Pokemon }) {
             <div style={{
                 display: 'flex', gap: 20, boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
                 border: "outset rgb(148, 182, 224)",
-                borderRadius: 10, width: '70%'
+                borderRadius: 10, width: '70%',
+                justifyContent: "center",
+
             }}>
-                <div >
+                <div style={{ width: 350, }}  >
                     <div style={{
                         border: "1px solid #ccc",
-                        padding: 20, borderRadius: 10, marginLeft: 20,
-                        marginTop: 18, width: 350, marginBottom: 20
+                        padding: 20, borderRadius: 10,
+                        marginTop: 18, marginBottom: 20
                     }}>
                         <h2 style={{ marginBottom: 10 }}>Base Experience</h2>
                         <Button
@@ -157,7 +168,7 @@ export default function PokemonDetail({ pokemon }: { pokemon: Pokemon }) {
                     </div>
                     <div style={{
                         border: "1px solid #ccc",
-                        padding: 20, borderRadius: 10, marginLeft: 20,
+                        padding: 20, borderRadius: 10,
                         marginTop: 20
                     }}>
                         <h2 style={{ marginBottom: 10 }}>Types</h2>
@@ -183,8 +194,8 @@ export default function PokemonDetail({ pokemon }: { pokemon: Pokemon }) {
                     </div>
                     <div style={{
                         border: "1px solid #ccc",
-                        padding: 20, borderRadius: 10, marginLeft: 20,
-                        marginTop: 20
+                        padding: 20, borderRadius: 10,
+                        marginTop: 20 
                     }}>  <h2>Abilities </h2>
 
                         {pokemon.abilities.map((ability, index) => (
@@ -205,10 +216,10 @@ export default function PokemonDetail({ pokemon }: { pokemon: Pokemon }) {
                             </Button>
                         ))}
                     </div>
-                    <div style={{ display: 'flex', width: '100%' }}>
+                    <div style={{ display: 'flex', width: '100%', marginBottom:20 }}>
                         <div style={{
                             border: "1px solid #ccc",
-                            padding: 20, borderRadius: 10, marginLeft: 20,
+                            padding: 20, borderRadius: 10,
                             marginTop: 20, width: '100%'
                         }}>  <h3>weight </h3>
                             {pokemon.weight / 10} kg
@@ -225,7 +236,7 @@ export default function PokemonDetail({ pokemon }: { pokemon: Pokemon }) {
                 <div style={{
                     border: "1px solid #ccc",
                     padding: 20, borderRadius: 10,
-                    marginTop: 20, marginBottom: 20, width: '28%'
+                    marginTop: 20, marginBottom: 35, width: '28%'
                 }}>
                     <div style={{
                         height: 180, marginBottom: 15
@@ -258,8 +269,8 @@ export default function PokemonDetail({ pokemon }: { pokemon: Pokemon }) {
                         />
                     </div>
                 </div>
-                <div >
-                    <h2 style={{ marginTop: 10 }}>Base Stats </h2>
+                <div   >
+                    <h2 style={{ marginTop: 20 }}>Base Stats </h2>
                     <RadarChart
 
                         height={300}
@@ -270,29 +281,42 @@ export default function PokemonDetail({ pokemon }: { pokemon: Pokemon }) {
                             metrics: ['HP', 'ATK', 'Def', 'Sp. Atk ', 'Sp. Def ', 'Spe'],
                         }}
                     />
-                    <Typography style={{ textAlign: 'left', padding: 20, backgroundColor: '#f0f0f0', borderRadius: 10 }}>
-                        {pokemon.stats.map((stat, index) => (
-                            <span key={index}>
-                                {stat.stat.name.charAt(0).toUpperCase() + stat.stat.name.slice(1) && stat.stat.name.replace('-', ' ')}: {stat.base_stat}
-                                {index < pokemon.stats.length - 1 ? '  ' : ' '}
-                                <br />
-                            </span>
-                        ))}
+
+                    <Typography style={{ textAlign: 'left', padding: 15, border: "1px solid #ccc", backgroundColor: 'none', borderRadius: 10 }}>
+                        {pokemon.stats.map((stat, index) => {
+                            const statName = stat.stat.name
+                                .replace('-', ' ')               // เปลี่ยน dash เป็น space
+                                .replace(/\b\w/g, (c) => c.toUpperCase()); // ทำให้อักษรตัวแรกของแต่ละคำเป็นตัวใหญ่
+
+                            return (
+                                <span key={index}>
+                                    {statName} : {stat.base_stat}
+                                    <br />
+                                </span>
+                            );
+                        })}
                     </Typography>
                 </div>
             </div>
-        </div>
+        </Grid>
     );
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { id } = context.query;
     try {
-        const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
-        if (!res.ok) return { notFound: true };
-        const pokemon = await res.json();
-        return { props: { pokemon } };
-    } catch {
-        return { notFound: true };
+        const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`);
+        const pokemon: Pokemon = response.data;
+
+        return {
+            props: {
+                pokemon,
+            },
+        };
+    } catch (error) {
+        console.error('Failed to fetch Pokémon:', error);
+        return {
+            notFound: true,
+        };
     }
 };
