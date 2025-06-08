@@ -21,9 +21,7 @@ type Pokemon = {
         front_default: string;
         front_shiny: string;
       };
-
     };
-
   };
   base_experience: number;
   height: number;
@@ -35,7 +33,6 @@ type Pokemon = {
     };
   }[];
   abilities: { ability: { name: string; url: string } }[];
-
 };
 type PokemonListItem = { name: string; url: string };
 

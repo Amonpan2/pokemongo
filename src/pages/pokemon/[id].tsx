@@ -74,15 +74,12 @@ type Pokemon = {
         };
     }[];
     flavoe_text_entries: {
-
     }
 };
-
 export default function PokemonDetail({ pokemon }: { pokemon: Pokemon }) {
 
     if (!pokemon) return <div>Not Found</div>;
     return (
-
         <Grid container spacing={2} size={{ xs: 12, md: 8 }}
             style={{
                 textAlign: "center",
@@ -101,7 +98,6 @@ export default function PokemonDetail({ pokemon }: { pokemon: Pokemon }) {
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'flex-start',
-
             }}>
                 <h1 className={styles.poke_name}>{pokemon.name}</h1>
                 <CardMedia sx={{
@@ -187,7 +183,6 @@ export default function PokemonDetail({ pokemon }: { pokemon: Pokemon }) {
                         padding: 20, borderRadius: 10,
                         marginTop: 20 
                     }}>  <h2>Abilities </h2>
-
                         {pokemon.abilities.map((ability, index) => (
                             <Button
                                 key={index}
@@ -240,7 +235,6 @@ export default function PokemonDetail({ pokemon }: { pokemon: Pokemon }) {
                             height={150}
                         />
                     </div>
-
                     <h3 style={{ textAlign: 'center', marginTop: 30 }} >Sprite Ver.</h3>
                     <div style={{ width: '100%' }}>
                         <Image
@@ -262,22 +256,18 @@ export default function PokemonDetail({ pokemon }: { pokemon: Pokemon }) {
                 <div   >
                     <h2 style={{ marginTop: 20 }}>Base Stats </h2>
                     <RadarChart
-
                         height={300}
-
                         series={[{ data: pokemon.stats.map(stat => stat.base_stat), }]}
                         radar={{
                             max: 120,
                             metrics: ['HP', 'ATK', 'Def', 'Sp. Atk ', 'Sp. Def ', 'Spe'],
                         }}
                     />
-
                     <Typography style={{ textAlign: 'left', padding: 15, border: "1px solid #ccc", backgroundColor: 'none', borderRadius: 10 }}>
                         {pokemon.stats.map((stat, index) => {
                             const statName = stat.stat.name
                                 .replace('-', ' ')               
                                 .replace(/\b\w/g, (c) => c.toUpperCase()); 
-
                             return (
                                 <span key={index}>
                                     {statName} : {stat.base_stat}
@@ -297,7 +287,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     try {
         const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`);
         const pokemon: Pokemon = response.data;
-
         return {
             props: {
                 pokemon,
