@@ -130,17 +130,17 @@ export default function Pokemon() {
         {loading && (
           <Typography sx={{ width: "100%", textAlign: "center" }}>Loading...</Typography>
         )}
-        {displayData.map(val => (
+        {displayData.map(pokemon => (
           <Grid size={{ xs: 12, md: 3 }}>
-            <Link href={`/pokemon/${val.id}`} style={{ textDecoration: "none" }}>
+            <Link href={`/pokemon/${pokemon.id}`} style={{ textDecoration: "none" }}>
               <Card>
                 <CardMedia sx={{
                   padding: 2,
                   background: '#defbe9'
                 }}>
                   <Image
-                    src={val.sprites.other?.dream_world?.front_default || val.sprites.front_default}
-                    alt={val.name}
+                    src={pokemon.sprites.other?.dream_world?.front_default || pokemon.sprites.front_default}
+                    alt={pokemon.name}
                     width={150}
                     height={150}
                     style={{
@@ -152,10 +152,10 @@ export default function Pokemon() {
                 </CardMedia>
                 <CardContent>
                   <Typography>
-                    {val.name.charAt(0).toUpperCase() + val.name.slice(1)}
+                    {pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}
                   </Typography>
                   <Typography>
-                    {val.types.map((type, index) => (
+                    {pokemon.types.map((type, index) => (
                       <Button
                         key={index}
                         variant="contained"

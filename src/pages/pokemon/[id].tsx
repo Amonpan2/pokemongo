@@ -13,8 +13,6 @@ import {
     Typography,
     Button,
     Grid,
-
-
 } from "@mui/material";
 import styles from "../../styles/Pokemon.module.css";
 type Pokemon = {
@@ -76,9 +74,27 @@ type Pokemon = {
     flavoe_text_entries: {
     }
 };
-export default function PokemonDetail({ pokemon }: { pokemon: Pokemon }) {
+export default function PokemonDetail() {
+    const router = useRouter();
+    const { id } = router.query;
 
-    if (!pokemon) return <div>Not Found</div>;
+    const [pokemon, setPokemon] = useState<Pokemon | null>(null);
+    const [error, setError] = useState(false);
+    const fetchPokemonID = async () => {
+        try {
+            const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`);
+            setPokemon(response.data);
+        } catch (errors) {
+            setError(true);
+        }
+    };
+    useEffect(() => {
+        if (!id) return;
+        fetchPokemonID();
+    }, [id]);
+
+    if (error) return <div>Not Found</div>;
+    if (!pokemon) return <div>Loading...</div>;
     return (
         <Grid container spacing={2} size={{ xs: 12, md: 8 }}
             style={{
@@ -181,7 +197,7 @@ export default function PokemonDetail({ pokemon }: { pokemon: Pokemon }) {
                     <div style={{
                         border: "1px solid #ccc",
                         padding: 20, borderRadius: 10,
-                        marginTop: 20 
+                        marginTop: 20
                     }}>  <h2>Abilities </h2>
                         {pokemon.abilities.map((ability, index) => (
                             <Button
@@ -201,7 +217,7 @@ export default function PokemonDetail({ pokemon }: { pokemon: Pokemon }) {
                             </Button>
                         ))}
                     </div>
-                    <div style={{ display: 'flex', width: '100%', marginBottom:20 }}>
+                    <div style={{ display: 'flex', width: '100%', marginBottom: 20 }}>
                         <div style={{
                             border: "1px solid #ccc",
                             padding: 20, borderRadius: 10,
@@ -266,8 +282,8 @@ export default function PokemonDetail({ pokemon }: { pokemon: Pokemon }) {
                     <Typography style={{ textAlign: 'left', padding: 15, border: "1px solid #ccc", backgroundColor: 'none', borderRadius: 10 }}>
                         {pokemon.stats.map((stat, index) => {
                             const statName = stat.stat.name
-                                .replace('-', ' ')               
-                                .replace(/\b\w/g, (c) => c.toUpperCase()); 
+                                .replace('-', ' ')
+                                .replace(/\b\w/g, (c) => c.toUpperCase());
                             return (
                                 <span key={index}>
                                     {statName} : {stat.base_stat}
@@ -282,20 +298,20 @@ export default function PokemonDetail({ pokemon }: { pokemon: Pokemon }) {
     );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const { id } = context.query;
-    try {
-        const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`);
-        const pokemon: Pokemon = response.data;
-        return {
-            props: {
-                pokemon,
-            },
-        };
-    } catch (error) {
-        console.error('Failed to fetch Pokémon:', error);
-        return {
-            notFound: true,
-        };
-    }
-};
+// export const getServerSideProps: GetServerSideProps = async (context) => {
+//     const { id } = context.query;
+//     try {
+//         const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`);
+//         const pokemon: Pokemon = response.data;
+//         return {
+//             props: {
+//                 pokemon,
+//             },
+//         };
+//     } catch (error) {
+//         console.error('Failed to fetch Pokémon:', error);
+//         return {
+//             notFound: true,
+//         };
+//     }
+// };
